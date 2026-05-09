@@ -1,0 +1,14 @@
+# HISTORIQUE DES COMMANDES - TP1 Docker
+# Auteur : RACHIDETOU ABDOU
+
+# 1. Construction de l'image
+docker build -t rachidetou-flask-app .
+
+# 2. Lancement du conteneur
+docker run -d -p 5000:5000 --name rachidetou-container rachidetou-flask-app
+
+# 3. Tag de l'image pour DockerHub
+docker tag rachidetou-flask-app rachida5/rachidetou-flask-app:latest
+
+# 4. Push sur DockerHub
+docker push rachida5/rachidetou-flask-app:latest
