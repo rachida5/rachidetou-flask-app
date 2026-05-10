@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        IMAGE_NAME = "rachida5/rachidetou-flask-app"
+        IMAGE_TAG  = "latest"
+    }
+
+    stages {
+
+        stage('Clonage') {
+            steps {
+                echo 'Clonage du depot GitHub...'
+                git branch: 'main',
+                    url: 'https://github.com/rachida5/rachidetou-flask-app.git'
+                echo 'Clonage termine.'
+            }
+        }
+
+        stage('Image') {
+            steps {
+                echo 'Construction de limage Docker...'
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                echo 'Image construite.'
+            }
+        }
+
+        stage('Publication') {
+            steps {
+                echo 'Publication sur DockerHub...'
+                sh """
+                    echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
+                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    docker logout
+                """
+                echo 'Image publiee sur DockerHub.'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline reussi — RACHIDETOU ABDOU'
+        }
+        failure {
+            echo 'Echec du pipeline.'
+        }
+    }
+}
